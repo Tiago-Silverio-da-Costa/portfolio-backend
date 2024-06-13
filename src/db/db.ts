@@ -1,9 +1,12 @@
 import { Pool } from 'pg';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export const pool = new Pool({
-    user: "postgres.fybjleupzmllbgmrbgvl",
-    password: "JNXJUdXF4E5Auypn",
-    host: "aws-0-us-east-1.pooler.supabase.com",
+    user: process.env.SUPABASE_SERVICE_ROLE,
+    password: process.env.SUPABASE_SERVICE_PASSWORD,
+    host: process.env.SUPABASE_SERVICE_HOST,
     port: 6543,
     database: "postgres",
 })
