@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import db from '../models';
 
 const { ROLES } = db;
-const User = db.user;
+const User = db.User;
 
 const checkDuplicateUsernameOrEmail = (req: Request, res: Response, next: NextFunction) => {
   // Username

@@ -2,12 +2,21 @@ import { Request, Response } from 'express';
 import db from '../models';
 import config from '../config/auth.config';
 import { Op } from 'sequelize';
-
+import zod from 'zod';
+import { isStrongPassword, isEmail } from 'validator';
 
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
 const { User, Role, RefreshToken } = db;
+
+export const LoginSchema = zod.object({
+  username: zod.string(),
+  email: zod.string().refine(isEmail, { message: "Invalid email" }),
+  password: zod.string().refine(isStrongPassword, { message: "Password is too weak" }),
+  roles: zod.string(),
+});
+export type Tlogin = zod.infer<typeof LoginSchema>;
 
 
 export const signup = async (req: Request, res: Response) => {
@@ -36,19 +45,19 @@ export const signup = async (req: Request, res: Response) => {
     });
 
     // Assign roles if provided
-    if (roles) {
+    if (roles && roles.length > 0) {
       const userRoles = await Role.findAll({
         where: {
-          name: {
-            [Op.or]: roles,
-          },
+          name: roles,
         },
       });
 
-      await newUser.setRoles(userRoles.map(role => role.id));
+      await newUser.set('roles', userRoles);
     } else {
-      // Default role if not provided
-      await newUser.setRoles([1]); // Assuming role with id 1 is the default role
+      const defaultRole = await Role.findOne({ where: { name: 'user' } }); 
+      if (defaultRole) {
+        await newUser.set('roles', [defaultRole]);
+      }
     }
 
     res.status(201).json({ message: "User was registered successfully!" });
@@ -59,21 +68,22 @@ export const signup = async (req: Request, res: Response) => {
 };
 
 
+
+
+
 export const signin = async (req: Request, res: Response) => {
-  const { username, password } = req.body;
+  const { username, password }: Tlogin = req.body;
 
   try {
-    // Find user by username
     const user = await User.findOne({
       where: { username },
-      include: Role, // Include associated roles
+      include: Role,
     });
 
     if (!user) {
       return res.status(404).json({ message: "User Not found." });
     }
 
-    // Check password
     const passwordIsValid = bcrypt.compareSync(password, user.password);
 
     if (!passwordIsValid) {
@@ -83,13 +93,11 @@ export const signin = async (req: Request, res: Response) => {
       });
     }
 
-    // Generate access token
     const token = jwt.sign({ id: user.id }, config.secret, {
       expiresIn: config.jwtExpiration,
     });
 
-    // Generate authorities (roles)
-    const authorities = user.Roles.map(role => `ROLE_${role.name.toUpperCase()}`);
+    const authorities = user.roles?.map(role => `ROLE_${role.name.toUpperCase()}`) || [];
 
     res.status(200).json({
       id: user.id,
@@ -103,6 +111,7 @@ export const signin = async (req: Request, res: Response) => {
     res.status(500).json({ message: error.message || "Some error occurred while signing in." });
   }
 };
+
 
 
 export const refreshToken = async (req: Request, res: Response) => {

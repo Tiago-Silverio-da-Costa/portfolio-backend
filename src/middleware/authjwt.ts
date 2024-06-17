@@ -3,7 +3,7 @@ import config from '../config/auth.config';
 import db from '../models';
 import { Request, Response, NextFunction } from 'express';
 
-const User = db.user;
+const User = db.User;
 
 declare module 'express-serve-static-core' {
     interface Request {

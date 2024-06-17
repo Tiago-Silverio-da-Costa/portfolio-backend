@@ -1,4 +1,4 @@
-import { DataTypes, Model, Sequelize } from 'sequelize';
+import { DataTypes, Model, Sequelize, Optional } from 'sequelize';
 import { Role } from './role.model'; // Import Role model
 
 export interface UserAttributes {
@@ -6,20 +6,23 @@ export interface UserAttributes {
   username: string;
   email: string;
   password: string;
+  roles?: Role[];
 }
 
-export class User extends Model<UserAttributes> implements UserAttributes {
+interface UserCreationAttributes extends Optional<UserAttributes, 'id'> { }
+
+export class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   public id!: number;
   public username!: string;
   public email!: string;
   public password!: string;
-
-  // Timestamps
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+
+  public roles?: Role[];
 }
 
-export const initUserModel = (sequelize: Sequelize): void => {
+export default (sequelize: Sequelize): typeof User => {
   User.init(
     {
       id: {
@@ -47,5 +50,7 @@ export const initUserModel = (sequelize: Sequelize): void => {
     }
   );
 
-   User.belongsToMany(Role, { through: 'UserRole' })
+  User.belongsToMany(Role, { through: 'UserRole' })
+
+  return User;
 };

@@ -16,7 +16,7 @@ export default {
     USER: process.env.SUPABASE_SERVICE_ROLE as string,
     PASSWORD: process.env.SUPABASE_SERVICE_PASSWORD as string,
     HOST: process.env.SUPABASE_SERVICE_HOST as string,
-    dialect: 'postgres', // or any other supported dialect
+    dialect: 'postgres', 
     pool: {
       max: 5,
       min: 0,

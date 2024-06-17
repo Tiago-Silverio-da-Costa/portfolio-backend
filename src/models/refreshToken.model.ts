@@ -1,7 +1,7 @@
 import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from './user.model';
-import { refreshToken } from '../../../node-js-jwt-auth-postgresql/models';
+import refreshToken from "../models/"
 
 interface RefreshTokenAttributes {
     id?: number;
@@ -29,7 +29,7 @@ export class RefreshToken extends Model<RefreshTokenAttributes, RefreshTokenCrea
 
         let _token = uuidv4();
 
-        let RefreshToken = await this.create({
+        let refreshToken = await this.create({
             token: _token,
             userId: user.id,
             expiryDate: expiredAt,
@@ -44,7 +44,7 @@ export class RefreshToken extends Model<RefreshTokenAttributes, RefreshTokenCrea
 }
 
 export default (sequelize: Sequelize): typeof RefreshToken => {
-    refreshToken.init(
+    RefreshToken.init(
         {
             id: {
                 type: DataTypes.INTEGER,
