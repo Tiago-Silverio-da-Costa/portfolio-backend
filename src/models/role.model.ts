@@ -29,7 +29,7 @@ export default (sequelize: Sequelize): typeof Role => {
         },
         {
             sequelize,
-            modelName: 'Role',
+            modelName: 'role',
         }
     )
 

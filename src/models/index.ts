@@ -2,6 +2,8 @@ import { Sequelize } from 'sequelize';
 import UserModel from './user.model';
 import RoleModel from './role.model';
 import RefreshTokenModel from './refreshToken.model';
+import ProjectModel from './project.model';
+import ExperienceModel from './experience.model';
 import config from '../config/db.config';
 
 const sequelize = new Sequelize(
@@ -26,16 +28,30 @@ const db: {
     User: ReturnType<typeof UserModel>;
     Role: ReturnType<typeof RoleModel>;
     RefreshToken: ReturnType<typeof RefreshTokenModel>;
+    Project: ReturnType<typeof ProjectModel>;
+    Experience: ReturnType<typeof ExperienceModel>;
     ROLES: string[];
+    
 } = {
     Sequelize,
     sequelize,
     User: UserModel(sequelize),
     Role: RoleModel(sequelize),
     RefreshToken: RefreshTokenModel(sequelize),
+    Project: ProjectModel(sequelize),
+    Experience: ExperienceModel(sequelize),
     ROLES: ['user', 'admin']
 };
 
+// db.Project.belongsTo(db.User, {
+//     foreignKey: 'userId',
+//     targetKey: 'id',
+// });
+
+// db.Experience.belongsTo(db.User, {
+//     foreignKey: 'userId',
+//     targetKey: 'id',
+// });
 
 db.Role.belongsToMany(db.User, {
     through: 'user_roles',

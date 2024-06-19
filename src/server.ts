@@ -16,6 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const Role = db.Role;
+const Experience = db.Experience;
 
 db.sequelize.sync({ force: true }).then(() => {
   console.log('Drop and Resync Db');

@@ -48,7 +48,7 @@ export default (sequelize: Sequelize): typeof Experience => {
         },
         {
             sequelize,
-            tableName: 'experiences',
+            tableName: 'experience',
         }
     );
 

@@ -46,11 +46,9 @@ export default (sequelize: Sequelize): typeof User => {
     },
     {
       sequelize,
-      modelName: 'User',
+      modelName: 'user',
     }
   );
-
-  User.belongsToMany(Role, { through: 'UserRole' })
 
   return User;
 };

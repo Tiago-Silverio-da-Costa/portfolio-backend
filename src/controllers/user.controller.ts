@@ -134,7 +134,8 @@ export const createProject = async (req: Request, res: Response) => {
     });
 
   } catch (error) {
-    if (axios.isAxiosError(error)) {
+    const err = error as Error;
+    if (axios.isAxiosError(err)) {
       return res.status(400).json({
         status: "error",
         message: "Invalid URL",
@@ -142,7 +143,7 @@ export const createProject = async (req: Request, res: Response) => {
       });
     }
 
-    return res.status(500).send("Something went wrong");
+    return res.status(500).send(err.message);
   }
 }
 
@@ -151,7 +152,8 @@ export const getProjects = async (req: Request, res: Response) => {
     const projects = await Project.findAll();
     return res.json(projects);
   } catch (error) {
-    return res.status(500).send("Something went wrong");
+    const err = error as Error;
+    return res.status(500).send(err.message);
   }
 }
 
@@ -170,7 +172,8 @@ export const getProjectById = async (req: Request, res: Response) => {
 
     return res.json(project);
   } catch (error) {
-    return res.status(500).send("Something went wrong");
+    const err = error as Error;
+    return res.status(500).send(err.message);
   }
 };
 
@@ -198,7 +201,8 @@ export const updateProject = async (req: Request, res: Response) => {
     });
 
   } catch (error) {
-    return res.status(500).send("Something went wrong");
+    const err = error as Error;
+    return res.status(500).send(err.message);
   }
 }
 
@@ -216,7 +220,8 @@ export const deleteProject = async (req: Request, res: Response) => {
     });
 
   } catch (error) {
-    return res.status(500).send("Something went wrong");
+    const err = error as Error;
+    return res.status(500).send(err.message);
   }
 }
 
@@ -271,7 +276,8 @@ export const createExperience = async (req: Request, res: Response) => {
     });
 
   } catch (error) {
-    return res.status(500).send("Something went wrong");
+    const err = error as Error;
+    return res.status(500).send(err.message);
   }
 }
 
@@ -280,7 +286,8 @@ export const getExperiences = async (req: Request, res: Response) => {
     const experiences = await Experience.findAll();
     return res.json(experiences);
   } catch (error) {
-    return res.status(500).send("Something went wrong");
+    const err = error as Error;
+    return res.status(500).send(err.message);
   }
 }
 
@@ -299,7 +306,8 @@ export const getExperienceById = async (req: Request, res: Response) => {
 
     return res.json(experience);
   } catch (error) {
-    return res.status(500).send("Something went wrong");
+    const err = error as Error;
+    return res.status(500).send(err.message);
   }
 }
 
@@ -323,7 +331,8 @@ export const updateExperience = async (req: Request, res: Response) => {
     });
 
   } catch (error) {
-    return res.status(500).send("Something went wrong");
+    const err = error as Error;
+    return res.status(500).send(err.message);
   }
 }
 
@@ -341,6 +350,7 @@ export const deleteExperience = async (req: Request, res: Response) => {
     });
 
   } catch (error) {
-    return res.status(500).send("Something went wrong");
+    const err = error as Error;
+    return res.status(500).send(err.message);
   }
 }

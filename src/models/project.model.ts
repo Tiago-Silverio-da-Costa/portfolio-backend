@@ -72,7 +72,7 @@ export default (sequelize: Sequelize): typeof Project => {
         },
         {
             sequelize,
-            tableName: 'projects',
+            tableName: 'project',
         }
     );
 

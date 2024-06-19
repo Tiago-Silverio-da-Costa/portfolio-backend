@@ -34,9 +34,9 @@ export default function (app: Application): void {
 
   // experience routes
   app.post("/createxp", controller.createExperience);
-  app.get("/getexps", controller.getExperiences);
-  app.get("/getexp/:id", controller.getExperienceById);
+  app.get("/getxps", controller.getExperiences);
+  app.get("/getxp/:id", controller.getExperienceById);
   app.put("/updatexp/:id", controller.updateExperience);
-  app.delete("/deleteexp/:id", controller.deleteExperience);
+  app.delete("/deletexp/:id", controller.deleteExperience);
 }
 

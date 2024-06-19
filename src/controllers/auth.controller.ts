@@ -63,7 +63,8 @@ export const signup = async (req: Request, res: Response) => {
     res.status(201).json({ message: "User was registered successfully!" });
 
   } catch (error) {
-    res.status(500).json({ message: error.message || "Some error occurred while signing up." });
+    const err = error as Error;
+    res.status(500).json({ message: err.message || "Some error occurred while signing up." });
   }
 };
 
@@ -108,7 +109,8 @@ export const signin = async (req: Request, res: Response) => {
     });
 
   } catch (error) {
-    res.status(500).json({ message: error.message || "Some error occurred while signing in." });
+    const err = error as Error;
+    res.status(500).json({ message: err.message || "Some error occurred while signing in." });
   }
 };
 
@@ -151,6 +153,7 @@ export const refreshToken = async (req: Request, res: Response) => {
     res.status(200).json({ accessToken, refreshToken: refreshTokenInstance.token });
 
   } catch (error) {
-    res.status(500).json({ message: error.message || "Some error occurred while refreshing token." });
+    const err = error as Error;
+    res.status(500).json({ message: err.message || "Some error occurred while refreshing token." });
   }
 };
