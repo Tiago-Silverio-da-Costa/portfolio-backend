@@ -11,16 +11,16 @@ const sequelize = new Sequelize(
     config.USER as string,
     config.PASSWORD as string,
     {
-      host: config.HOST,
-      dialect: config.dialect as 'postgres',    
-      pool: {
-        max: config.pool.max,
-        min: config.pool.min,
-        acquire: config.pool.acquire,
-        idle: config.pool.idle,
-      },
+        host: config.HOST,
+        dialect: config.dialect as 'postgres',
+        pool: {
+            max: config.pool.max,
+            min: config.pool.min,
+            acquire: config.pool.acquire,
+            idle: config.pool.idle,
+        },
     }
-  );
+);
 
 const db: {
     Sequelize: typeof Sequelize;
@@ -31,7 +31,7 @@ const db: {
     Project: ReturnType<typeof ProjectModel>;
     Experience: ReturnType<typeof ExperienceModel>;
     ROLES: string[];
-    
+
 } = {
     Sequelize,
     sequelize,
@@ -43,15 +43,15 @@ const db: {
     ROLES: ['user', 'admin']
 };
 
-// db.Project.belongsTo(db.User, {
-//     foreignKey: 'userId',
-//     targetKey: 'id',
-// });
+db.Project.belongsTo(db.User, {
+    foreignKey: 'userId',
+    targetKey: 'id',
+});
 
-// db.Experience.belongsTo(db.User, {
-//     foreignKey: 'userId',
-//     targetKey: 'id',
-// });
+db.Experience.belongsTo(db.User, {
+    foreignKey: 'userId',
+    targetKey: 'id',
+});
 
 db.Role.belongsToMany(db.User, {
     through: 'user_roles',

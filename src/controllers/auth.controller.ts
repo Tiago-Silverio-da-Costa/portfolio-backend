@@ -68,10 +68,6 @@ export const signup = async (req: Request, res: Response) => {
   }
 };
 
-
-
-
-
 export const signin = async (req: Request, res: Response) => {
   const { username, password }: Tlogin = req.body;
 
@@ -113,8 +109,6 @@ export const signin = async (req: Request, res: Response) => {
     res.status(500).json({ message: err.message || "Some error occurred while signing in." });
   }
 };
-
-
 
 export const refreshToken = async (req: Request, res: Response) => {
   const { refreshToken: requestToken } = req.body;
