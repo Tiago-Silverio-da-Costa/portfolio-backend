@@ -30,19 +30,19 @@ export default (sequelize: Sequelize): typeof Experience => {
                 autoIncrement: true,
             },
             company: {
-                type: DataTypes.STRING,
+                type: DataTypes.STRING(50),
                 allowNull: false,
             },
             description: {
-                type: DataTypes.STRING,
+                type: DataTypes.STRING(5000),
                 allowNull: false,
             },
             init_time: {
-                type: DataTypes.STRING,
+                type: DataTypes.STRING(25),
                 allowNull: false,
             },
             final_time: {
-                type: DataTypes.STRING,
+                type: DataTypes.STRING(25),
                 allowNull: false,
             },
         },

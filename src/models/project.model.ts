@@ -38,11 +38,11 @@ export default (sequelize: Sequelize): typeof Project => {
                 autoIncrement: true,
             },
             name: {
-                type: DataTypes.STRING,
+                type: DataTypes.STRING(100),
                 allowNull: false,
             },
             description: {
-                type: DataTypes.STRING,
+                type: DataTypes.STRING(5000),
                 allowNull: false,
             },
             image_url: {
@@ -58,7 +58,7 @@ export default (sequelize: Sequelize): typeof Project => {
                 allowNull: false,
             },
             programming_language: {
-                type: DataTypes.STRING,
+                type: DataTypes.STRING(50),
                 allowNull: false,
             },
             repo_url: {

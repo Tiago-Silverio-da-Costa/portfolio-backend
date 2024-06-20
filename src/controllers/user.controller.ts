@@ -60,6 +60,15 @@ export const createProject = async (req: Request, res: Response) => {
       project_url
     }: TCreateProject = schema.parse(req.body);
 
+    name = (name?.trim() ?? "").substring(0, 100);
+    description = (description?.trim() ?? "").substring(0, 5000);
+    programming_language = (programming_language?.trim() ?? "").substring(0, 50);
+    image_url = (image_url?.trim() ?? "").substring(0, 255);
+    gif_url = (gif_url?.trim() ?? "").substring(0, 255);
+    video_url = (video_url?.trim() ?? "").substring(0, 255);
+    repo_url = (repo_url?.trim() ?? "").substring(0, 255);
+    project_url = (project_url?.trim() ?? "").substring(0, 255);
+
     // Validate inputs
     if (!name || !description || !image_url || !gif_url || !video_url || !programming_language || !repo_url || !project_url) {
       let fields: string[] = [];
@@ -71,6 +80,8 @@ export const createProject = async (req: Request, res: Response) => {
       if (!programming_language) fields.push("programming_language");
       if (!repo_url) fields.push("repo_url");
       if (!project_url) fields.push("project_url");
+
+
 
       return res.status(400).json({
         status: "error",
