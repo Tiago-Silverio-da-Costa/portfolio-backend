@@ -15,24 +15,8 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-const Role = db.Role;
 
-db.sequelize.sync({ force: true }).then(() => {
-  console.log('Drop and Resync Db');
-  initial();
-});
-
-function initial() {
-  Role.create({
-    id: 1,
-    name: 'user'
-  });
-
-  Role.create({
-    id: 2,
-    name: 'admin'
-  });
-}
+db.sequelize.sync()
 
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to tiagosc application' });
