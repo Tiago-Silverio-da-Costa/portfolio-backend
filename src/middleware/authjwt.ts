@@ -1,4 +1,5 @@
-import jwt, { TokenExpiredError } from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
+import { TokenExpiredError } from 'jsonwebtoken';
 import config from '../config/auth.config';
 import db from '../models';
 import { Request, Response, NextFunction } from 'express';

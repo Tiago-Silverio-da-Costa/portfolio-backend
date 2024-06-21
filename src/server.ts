@@ -1,5 +1,5 @@
-import express from 'express';
-import cors from 'cors';
+import express = require('express');
+import cors = require('cors');
 import db from './models';
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';

@@ -2,21 +2,20 @@ import { Request, Response } from 'express';
 import db from '../models';
 import config from '../config/auth.config';
 import { Op } from 'sequelize';
-import zod from 'zod';
+import { z } from 'zod';
 import { isStrongPassword, isEmail } from 'validator';
-
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+import * as jwt from 'jsonwebtoken';
+import * as bcrypt from 'bcryptjs';
 
 const { User, Role, RefreshToken } = db;
 
-export const LoginSchema = zod.object({
-  username: zod.string(),
-  email: zod.string().refine(isEmail, { message: "Invalid email" }),
-  password: zod.string().refine(isStrongPassword, { message: "Password is too weak" }),
-  roles: zod.string(),
+export const LoginSchema = z.object({
+  username: z.string(),
+  email: z.string().refine(isEmail, { message: "Invalid email" }),
+  password: z.string().refine(isStrongPassword, { message: "Password is too weak" }),
+  roles: z.string(),
 });
-export type Tlogin = zod.infer<typeof LoginSchema>;
+export type Tlogin = z.infer<typeof LoginSchema>;
 
 
 export const signup = async (req: Request, res: Response) => {

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
 import { Project } from '../models/project.model';
-import zod from 'zod';
+import { z } from 'zod';
 import { Experience } from '../models/experience.model';
 
 export const allAccess = (req: Request, res: Response) => {
@@ -16,26 +16,26 @@ export const adminBoard = (req: Request, res: Response) => {
   res.status(200).send("Admin Content.");
 };
 
-export const ProjectSchema = zod.object({
-  name: zod.string(),
-  description: zod.string(),
-  image_url: zod.string().url().startsWith("https://"),
-  gif_url: zod.string().url().startsWith("https://"),
-  video_url: zod.string().url().startsWith("https://"),
-  programming_language: zod.string(),
-  repo_url: zod.string().url().startsWith("https://"),
-  project_url: zod.string().url().startsWith("https://")
+export const ProjectSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  image_url: z.string().url().startsWith("https://"),
+  gif_url: z.string().url().startsWith("https://"),
+  video_url: z.string().url().startsWith("https://"),
+  programming_language: z.string(),
+  repo_url: z.string().url().startsWith("https://"),
+  project_url: z.string().url().startsWith("https://")
 });
-export type TCreateProject = zod.infer<typeof ProjectSchema>;
+export type TCreateProject = z.infer<typeof ProjectSchema>;
 
-export const ExperienceSchema = zod.object({
-  id: zod.number().optional(),
-  company: zod.string().min(1, { message: "Required Field" }),
-  description: zod.string().min(1, { message: "Required Field" }),
-  init_time: zod.string().min(1, { message: "Required Field" }),
-  final_time: zod.string().min(1, { message: "Required Field" }),
+export const ExperienceSchema = z.object({
+  id: z.number().optional(),
+  company: z.string().min(1, { message: "Required Field" }),
+  description: z.string().min(1, { message: "Required Field" }),
+  init_time: z.string().min(1, { message: "Required Field" }),
+  final_time: z.string().min(1, { message: "Required Field" }),
 })
-export type TCreateExperience = Zod.TypeOf<typeof ExperienceSchema>
+export type TCreateExperience = z.TypeOf<typeof ExperienceSchema>
 
 
 export const createProject = async (req: Request, res: Response) => {
