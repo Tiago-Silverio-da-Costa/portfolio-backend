@@ -7,7 +7,8 @@ var auth_routes_1 = require("./routes/auth.routes");
 var user_routes_1 = require("./routes/user.routes");
 var app = express();
 app.use(cors({
-    origin: "http://localhost:3000",
+    origin: "https://portfolio-tiagosc.vercel.app",
+    preflightContinue: true,
     credentials: true
 }));
 app.use(express.json());

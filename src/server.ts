@@ -8,6 +8,7 @@ const app = express();
 
 app.use(cors({
   origin: "https://portfolio-tiagosc.vercel.app",
+  preflightContinue: true,
   credentials: true
 }))
 
