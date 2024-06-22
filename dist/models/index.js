@@ -1,13 +1,16 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var sequelize_1 = require("sequelize");
-var user_model_1 = require("./user.model");
-var role_model_1 = require("./role.model");
-var refreshToken_model_1 = require("./refreshToken.model");
-var project_model_1 = require("./project.model");
-var experience_model_1 = require("./experience.model");
-var db_config_1 = require("../config/db.config");
-var sequelize = new sequelize_1.Sequelize(db_config_1.default.DB, db_config_1.default.USER, db_config_1.default.PASSWORD, {
+const sequelize_1 = require("sequelize");
+const user_model_1 = __importDefault(require("./user.model"));
+const role_model_1 = __importDefault(require("./role.model"));
+const refreshToken_model_1 = __importDefault(require("./refreshToken.model"));
+const project_model_1 = __importDefault(require("./project.model"));
+const experience_model_1 = __importDefault(require("./experience.model"));
+const db_config_1 = __importDefault(require("../config/db.config"));
+const sequelize = new sequelize_1.Sequelize(db_config_1.default.DB, db_config_1.default.USER, db_config_1.default.PASSWORD, {
     host: db_config_1.default.HOST,
     dialect: db_config_1.default.dialect,
     pool: {
@@ -17,9 +20,9 @@ var sequelize = new sequelize_1.Sequelize(db_config_1.default.DB, db_config_1.de
         idle: db_config_1.default.pool.idle,
     },
 });
-var db = {
+const db = {
     Sequelize: sequelize_1.Sequelize,
-    sequelize: sequelize,
+    sequelize,
     User: (0, user_model_1.default)(sequelize),
     Role: (0, role_model_1.default)(sequelize),
     RefreshToken: (0, refreshToken_model_1.default)(sequelize),
