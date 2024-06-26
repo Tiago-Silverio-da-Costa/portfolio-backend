@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
 });
 (0, auth_routes_1.default)(app);
 (0, user_routes_1.default)(app);
-const PORT = process.env.PORT || 4000;
+const PORT = 4000;
 app.listen(PORT, () => {
     console.log(`Server is running on port http://localhost:${PORT}`);
 });

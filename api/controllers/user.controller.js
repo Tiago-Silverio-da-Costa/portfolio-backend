@@ -229,7 +229,7 @@ const deleteProject = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 exports.deleteProject = deleteProject;
 // EXPERIENCE
 const createExperience = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d;
+    var _j, _k, _l, _m;
     try {
         if (req.headers["content-type"] !== "application/json") {
             return res.status(400).json({
@@ -239,10 +239,10 @@ const createExperience = (req, res) => __awaiter(void 0, void 0, void 0, functio
             });
         }
         let { company, description, init_time, final_time } = req.body;
-        company = ((_a = company === null || company === void 0 ? void 0 : company.trim()) !== null && _a !== void 0 ? _a : "").substring(0, 100);
-        description = ((_b = description === null || description === void 0 ? void 0 : description.trim()) !== null && _b !== void 0 ? _b : "").substring(0, 5000);
-        init_time = ((_c = init_time === null || init_time === void 0 ? void 0 : init_time.trim()) !== null && _c !== void 0 ? _c : "").substring(0, 25);
-        final_time = ((_d = final_time === null || final_time === void 0 ? void 0 : final_time.trim()) !== null && _d !== void 0 ? _d : "").substring(0, 25);
+        company = ((_j = company === null || company === void 0 ? void 0 : company.trim()) !== null && _j !== void 0 ? _j : "").substring(0, 100);
+        description = ((_k = description === null || description === void 0 ? void 0 : description.trim()) !== null && _k !== void 0 ? _k : "").substring(0, 5000);
+        init_time = ((_l = init_time === null || init_time === void 0 ? void 0 : init_time.trim()) !== null && _l !== void 0 ? _l : "").substring(0, 25);
+        final_time = ((_m = final_time === null || final_time === void 0 ? void 0 : final_time.trim()) !== null && _m !== void 0 ? _m : "").substring(0, 25);
         if (!company || !description || !init_time || !final_time) {
             let fields = [];
             if (!company)

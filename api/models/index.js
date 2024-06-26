@@ -13,6 +13,12 @@ const db_config_1 = __importDefault(require("../config/db.config"));
 const sequelize = new sequelize_1.Sequelize(db_config_1.default.DB, db_config_1.default.USER, db_config_1.default.PASSWORD, {
     host: db_config_1.default.HOST,
     dialect: db_config_1.default.dialect,
+    dialectOptions: {
+        ssl: {
+            require: true,
+            rejectUnauthorized: false
+        }
+    },
     pool: {
         max: db_config_1.default.pool.max,
         min: db_config_1.default.pool.min,
