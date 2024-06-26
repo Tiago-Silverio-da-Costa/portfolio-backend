@@ -1,7 +1,7 @@
 import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from './user.model';
-import refreshToken from "../models/"
+import refreshToken from "."
 
 interface RefreshTokenAttributes {
     id?: number;
