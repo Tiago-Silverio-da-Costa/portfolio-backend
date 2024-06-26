@@ -1,16 +1,15 @@
 {
     "version": 2,
     "builds": [
-      { "src": "package.json", "use": "@vercel/node" }
+        {
+            "src": "*.js",
+            "use": "@vercel/node"
+        }
     ],
-    "env": {
-      "PG_CONFIG": "/usr/local/bin/pg_config"
-    },
-    "rewrites": [
-      {
-        "source": "/(.*)",
-        "destination": "/src"
-      }
+    "routes": [
+        {
+            "source": "/(.*)",
+            "dest": "/src/server.ts"
+        }
     ]
-  }
-  
+}
