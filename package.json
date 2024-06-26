@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "npx ts-node src/server.ts",
     "test": "jest --config jest.config.ts",
-    "build": "tsc",
-    "vercel-build": "apt-get update && apt-get install -y postgresql-client && npm run build"
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -23,7 +22,6 @@
     "pg": "^8.12.0",
     "pg-hstore": "^2.3.4",
     "pg-native": "^3.1.0",
-    "prebuild-install": "^7.1.2",
     "sequelize": "^6.37.3",
     "validator": "^13.12.0",
     "zod": "^3.23.8"
@@ -43,13 +41,9 @@
     "@types/uuid": "^9.0.8",
     "@types/validator": "^13.12.0",
     "jest": "^29.7.0",
-    "node-gyp": "^10.1.0",
     "supertest": "^7.0.0",
     "ts-jest": "^29.1.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.2"
-  },
-  "engines": {
-    "node": ">=16.0.0"
   }
 }
