@@ -3,7 +3,7 @@
     "target": "es6",
     "module": "commonjs",
     "esModuleInterop": true,
-    "outDir": "api",
+    "outDir": "public",
     "moduleResolution": "Node",
     "strict": true,
     "skipLibCheck": true,
