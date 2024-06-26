@@ -6,7 +6,6 @@
       "destination": "/api"
     }
   ],
-  "use": "@vercel/node",
   "src": "api/index.ts",
   "config": {
     "zeroConfig": true
