@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import { URL } from 'url';
 dotenv.config();
 
 export default {
@@ -7,6 +8,7 @@ export default {
     PASSWORD: process.env.POSTGRES_PASSWORD as string,
     HOST: process.env.POSTGRES_HOST as string,
     dialect: 'postgres', 
+    URL: process.env.POSTGRES_URL as string,
     pool: {
       max: 5,
       min: 0,
