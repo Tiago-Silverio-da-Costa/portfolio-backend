@@ -6,7 +6,6 @@
       "destination": "/api"
     }
   ],
-  "src": "api/index.ts",
   "config": {
     "zeroConfig": true
   }
