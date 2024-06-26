@@ -1,9 +1,16 @@
-{ 
-    "version": 2, 
+{
+    "version": 2,
+    "builds": [
+      { "src": "package.json", "use": "@vercel/node" }
+    ],
+    "env": {
+      "PG_CONFIG": "/usr/local/bin/pg_config"
+    },
     "rewrites": [
-        { 
-            "source": "/(.*)", 
-            "destination": "/src"
-             }
-             ] 
-            }
+      {
+        "source": "/(.*)",
+        "destination": "/src"
+      }
+    ]
+  }
+  

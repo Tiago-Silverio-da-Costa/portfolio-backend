@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "npx ts-node src/server.ts",
     "test": "jest --config jest.config.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "vercel-build": "apt-get update && apt-get install -y postgresql-client && npm run build"
   },
   "keywords": [],
   "author": "",
