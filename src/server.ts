@@ -7,7 +7,7 @@ import userRoutes from './routes/user.routes';
 const app = express();
 
 app.use(cors({
-  origin: "https://portfolio-tiagosc.vercel.app",
+  origin: "*",
   preflightContinue: true,
   credentials: true
 }))
