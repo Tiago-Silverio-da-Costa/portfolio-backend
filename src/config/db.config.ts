@@ -1,5 +1,4 @@
 import dotenv from 'dotenv';
-import { URL } from 'url';
 dotenv.config();
 
 export default {
