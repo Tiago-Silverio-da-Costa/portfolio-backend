@@ -3,7 +3,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/public/api/index.js",
+      "dest": "/api/index.ts",
       "methods": [
         "GET",
         "POST",
@@ -12,6 +12,12 @@
         "DELETE",
         "OPTIONS"
       ]
+    }
+  ],
+  "builds": [
+    {
+      "src": "/api/index.ts",
+      "use": "@vercel/node"
     }
   ]
 }

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "src/server.ts",
   "scripts": {
-    "dev": "node public/api/index.js",
+    "dev": "npx ts-node api/index.ts",
     "test": "jest --config jest.config.ts",
     "build": "tsc"
   },
