@@ -3,6 +3,7 @@ import cors from 'cors';
 import db from './_utils/models';
 import authRoutes from './_utils/routes/auth.routes';
 import userRoutes from './_utils/routes/user.routes';
+import bodyParser from 'body-parser';
 
 const app = express();
 
@@ -14,7 +15,7 @@ app.use(cors({
 
 app.use(express.json());
 
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }))
 
 db.sequelize.sync();
 
