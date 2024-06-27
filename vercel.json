@@ -3,7 +3,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/api/index.ts",
+      "dest": "/public/api/index.js",
       "methods": [
         "GET",
         "POST",
