@@ -23,27 +23,18 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = default_1;
 const middleware_1 = require("../middleware");
-const controller = __importStar(require("../controllers/user.controller"));
+const controller = __importStar(require("../controllers/auth.controller"));
 function default_1(app) {
     app.use((req, res, next) => {
         res.header("Access-Control-Allow-Headers", "x-access-token, Origin, Content-Type, Accept");
         next();
     });
-    app.get("/api/test/all", controller.allAccess);
-    app.get("/api/test/user", [middleware_1.authJwt.verifyToken], controller.userBoard);
-    app.get("/api/test/admin", [middleware_1.authJwt.verifyToken, middleware_1.authJwt.isAdmin], controller.adminBoard);
-    // project routes
-    app.post("/createproject", controller.createProject);
-    app.get("/getprojects", controller.getProjects);
-    app.get("/getproject/:id", controller.getProjectById);
-    app.put("/updateproject/:id", controller.updateProject);
-    app.delete("/deleteproject/:id", controller.deleteProject);
-    // experience routes
-    app.post("/createxp", controller.createExperience);
-    app.get("/getxps", controller.getExperiences);
-    app.get("/getxp/:id", controller.getExperienceById);
-    app.put("/updatexp/:id", controller.updateExperience);
-    app.delete("/deletexp/:id", controller.deleteExperience);
+    app.post("/api/auth/refreshtoken", controller.refreshToken);
+    app.post("/api/auth/signup", [
+        middleware_1.verifySignUp.checkDuplicateUsernameOrEmail,
+        middleware_1.verifySignUp.checkRolesExisted
+    ], controller.signup);
+    app.post("/api/auth/signin", controller.signin);
 }
+exports.default = default_1;

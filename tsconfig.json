@@ -3,16 +3,10 @@
     "target": "es6",
     "module": "commonjs",
     "esModuleInterop": true,
-    "outDir": "public",
+    "outDir": "api",
     "moduleResolution": "Node",
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": [
-    "api/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
 }
