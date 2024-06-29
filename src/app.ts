@@ -8,11 +8,7 @@ import api from '../api';
 
 const app = express();
 
-app.use(cors({
-  origin: "https://portfolio-tiagosc.vercel.app",
-  preflightContinue: true,
-  credentials: true
-}))
+app.use(cors())
 
 app.use(express.json());
 
@@ -28,10 +24,5 @@ app.use('/api/v1', api);
 
 authRoutes(app);
 userRoutes(app);
-
-// const PORT = 4000;
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port http://localhost:${PORT}`);
-// });
 
 export default app
