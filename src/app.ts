@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
-import db from './_utils/models';
-import authRoutes from './_utils/routes/auth.routes';
-import userRoutes from './_utils/routes/user.routes';
+import db from './models';
+import authRoutes from './routes/auth.routes';
+import userRoutes from './routes/user.routes';
 import bodyParser from 'body-parser';
 
 const app = express();
@@ -26,9 +26,9 @@ app.get('/', (req, res) => {
 authRoutes(app);
 userRoutes(app);
 
-const PORT = 4000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port http://localhost:${PORT}`);
-});
+// const PORT = 4000;
+// app.listen(PORT, () => {
+//   console.log(`Server is running on port http://localhost:${PORT}`);
+// });
 
 export default app
