@@ -1,16 +1,17 @@
 import * as jwt from 'jsonwebtoken';
-import { TokenExpiredError } from 'jsonwebtoken';
-import config from '../config/auth.config';
-import db from '../models';
+import pkg from 'jsonwebtoken';
+const { TokenExpiredError } = pkg;
+import config from '../config/auth.config.js';
+import db from '../models/index.js';
 import { Request, Response, NextFunction } from 'express';
 
 const User = db.User;
 
 declare module 'express-serve-static-core' {
     interface Request {
-      userId?: string;
+        userId?: string;
     }
-  }
+}
 
 const catchError = (err: Error, res: Response) => {
     if (err instanceof TokenExpiredError) {
@@ -32,7 +33,11 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
         }
         req.userId = decoded.id;
         next();
+
+        return err
     });
+
+    return
 }
 
 const isAdmin = (req: Request, res: Response, next: NextFunction) => {

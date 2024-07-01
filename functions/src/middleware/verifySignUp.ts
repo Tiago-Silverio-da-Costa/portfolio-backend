@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import db from '../models';
+import db from '../models/index.js';
 
 const { ROLES } = db;
 const User = db.User;

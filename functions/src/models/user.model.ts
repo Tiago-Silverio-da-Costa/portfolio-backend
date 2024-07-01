@@ -1,5 +1,5 @@
 import { DataTypes, Model, Sequelize, Optional } from 'sequelize';
-import { Role } from './role.model'; // Import Role model
+import { Role } from './role.model.js';
 
 export interface UserAttributes {
   id: number;

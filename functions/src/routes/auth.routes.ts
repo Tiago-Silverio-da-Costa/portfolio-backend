@@ -1,6 +1,6 @@
 import { Application, Request, Response, NextFunction } from 'express';
-import { verifySignUp } from '../middleware';
-import * as controller from '../controllers/auth.controller';
+import { verifySignUp } from '../middleware/index.js';
+import * as controller from '../controllers/auth.controller.js';
 
 export default function (app: Application): void {
   app.use((req: Request, res: Response, next: NextFunction) => {

@@ -1,6 +1,6 @@
 import { Application, Request, Response, NextFunction } from 'express';
-import { authJwt } from '../middleware';
-import * as controller from '../controllers/user.controller';
+import { authJwt } from '../middleware/index.js';
+import * as controller from '../controllers/user.controller.js';
 
 export default function (app: Application): void {
   app.use((req: Request, res: Response, next: NextFunction) => {

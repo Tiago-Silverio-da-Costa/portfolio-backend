@@ -1,10 +1,10 @@
 import { Sequelize } from 'sequelize';
-import UserModel from './user.model';
-import RoleModel from './role.model';
-import RefreshTokenModel from './refreshToken.model';
-import ProjectModel from './project.model';
-import ExperienceModel from './experience.model';
-import config from '../config/db.config';
+import UserModel from './user.model.js';
+import RoleModel from './role.model.js';
+import RefreshTokenModel from './refreshToken.model.js';
+import ProjectModel from './project.model.js';
+import ExperienceModel from './experience.model.js';
+import config from '../config/db.config.js';
 
 const sequelize = new Sequelize(
     config.DB as string,

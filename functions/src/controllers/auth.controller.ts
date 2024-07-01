@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
-import db from '../models';
-import config from '../config/auth.config';
+import db from '../models/index.js';
+import config from '../config/auth.config.js';
 import { Op } from 'sequelize';
 import { z } from 'zod';
-import { isStrongPassword, isEmail } from 'validator';
+import pkg from 'validator';
+const { isStrongPassword, isEmail } = pkg;
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcryptjs';
 
@@ -59,11 +60,11 @@ export const signup = async (req: Request, res: Response) => {
       }
     }
 
-    res.status(201).json({ message: "User was registered successfully!" });
+    return res.status(201).json({ message: "User was registered successfully!" });
 
   } catch (error) {
     const err = error as Error;
-    res.status(500).json({ message: err.message || "Some error occurred while signing up." });
+    return res.status(500).json({ message: err.message || "Some error occurred while signing up." });
   }
 };
 
@@ -95,7 +96,7 @@ export const signin = async (req: Request, res: Response) => {
 
     const authorities = user.roles?.map(role => `ROLE_${role.name.toUpperCase()}`) || [];
 
-    res.status(200).json({
+    return res.status(200).json({
       id: user.id,
       username: user.username,
       email: user.email,
@@ -105,7 +106,7 @@ export const signin = async (req: Request, res: Response) => {
 
   } catch (error) {
     const err = error as Error;
-    res.status(500).json({ message: err.message || "Some error occurred while signing in." });
+    return res.status(500).json({ message: err.message || "Some error occurred while signing in." });
   }
 };
 
@@ -143,10 +144,10 @@ export const refreshToken = async (req: Request, res: Response) => {
     });
 
     // Respond with new access token and existing refresh token
-    res.status(200).json({ accessToken, refreshToken: refreshTokenInstance.token });
+    return res.status(200).json({ accessToken, refreshToken: refreshTokenInstance.token });
 
   } catch (error) {
     const err = error as Error;
-    res.status(500).json({ message: err.message || "Some error occurred while refreshing token." });
+    return res.status(500).json({ message: err.message || "Some error occurred while refreshing token." });
   }
 };

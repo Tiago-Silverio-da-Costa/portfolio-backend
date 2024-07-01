@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
-import { Project } from '../models/project.model';
+import { Project } from '../models/project.model.js';
 import { z } from 'zod';
-import { Experience } from '../models/experience.model';
+import { Experience } from '../models/experience.model.js';
 
 export const allAccess = (req: Request, res: Response) => {
   res.status(200).send("Public Content.");
