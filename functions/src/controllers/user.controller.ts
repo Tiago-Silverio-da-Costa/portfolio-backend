@@ -69,7 +69,6 @@ export const createProject = async (req: Request, res: Response) => {
     repo_url = (repo_url?.trim() ?? "").substring(0, 255);
     project_url = (project_url?.trim() ?? "").substring(0, 255);
 
-    // Validate inputs
     if (!name || !description || !image_url || !gif_url || !video_url || !programming_language || !repo_url || !project_url) {
       let fields: string[] = [];
       if (!name) fields.push("name");
@@ -91,7 +90,6 @@ export const createProject = async (req: Request, res: Response) => {
       });
     }
 
-    // Validate URLs against trusted domains
     const trustedDomains = [
       "https://i.imgur.com/",
       "https://github.com/",
@@ -112,7 +110,6 @@ export const createProject = async (req: Request, res: Response) => {
       return res.status(403).send("Access to this domain is not permitted");
     }
 
-    // Example of axios usage to fetch data from URLs
     const [image, gif, video, repo, project] = await Promise.all([
       axios.get(image_url),
       axios.get(gif_url),
@@ -121,7 +118,6 @@ export const createProject = async (req: Request, res: Response) => {
       axios.get(project_url)
     ]);
 
-    // Assuming ProjectModel is defined and sequelize instance is properly set up
     await Project.create({
       name,
       description,
@@ -235,8 +231,6 @@ export const deleteProject = async (req: Request, res: Response) => {
     return res.status(500).send(err.message);
   }
 }
-
-// EXPERIENCE
 
 export const createExperience = async (req: Request, res: Response) => {
   try {

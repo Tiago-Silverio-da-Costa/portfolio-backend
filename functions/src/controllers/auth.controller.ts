@@ -34,17 +34,14 @@ export const signup = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Username or Email already exists!" });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 8);
 
-    // Create User
     const newUser = await User.create({
       username,
       email,
       password: hashedPassword,
     });
 
-    // Assign roles if provided
     if (roles && roles.length > 0) {
       const userRoles = await Role.findAll({
         where: {
@@ -118,32 +115,27 @@ export const refreshToken = async (req: Request, res: Response) => {
   }
 
   try {
-    // Find refresh token in database
     const refreshTokenInstance = await RefreshToken.findOne({ where: { token: requestToken } });
 
     if (!refreshTokenInstance) {
       return res.status(403).json({ message: "Refresh token is not valid or expired!" });
     }
 
-    // Verify if the refresh token is expired
     if (RefreshToken.isTokenExpired(refreshTokenInstance)) {
       await refreshTokenInstance.destroy();
       return res.status(403).json({ message: "Refresh token is expired. Please make a new signin request." });
     }
 
-    // Find user associated with the refresh token
     const user = await User.findByPk(refreshTokenInstance.userId);
 
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
 
-    // Generate new access token
     const accessToken = jwt.sign({ id: user.id }, config.secret, {
       expiresIn: config.jwtExpiration,
     });
 
-    // Respond with new access token and existing refresh token
     return res.status(200).json({ accessToken, refreshToken: refreshTokenInstance.token });
 
   } catch (error) {

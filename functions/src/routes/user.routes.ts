@@ -25,14 +25,12 @@ export default function (app: Application): void {
     controller.adminBoard
   );
 
-  // project routes
   app.post("/createproject", controller.createProject);
   app.get("/getprojects", controller.getProjects);
   app.get("/getproject/:id", controller.getProjectById);
   app.put("/updateproject/:id", controller.updateProject);
   app.delete("/deleteproject/:id", controller.deleteProject);
 
-  // experience routes
   app.post("/createxp", controller.createExperience);
   app.get("/getxps", controller.getExperiences);
   app.get("/getxp/:id", controller.getExperienceById);
