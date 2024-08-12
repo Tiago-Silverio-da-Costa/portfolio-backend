@@ -6,6 +6,7 @@ export interface UserAttributes {
   username: string;
   email: string;
   password: string;
+  image: string;
   roles?: Role[];
 }
 
@@ -16,6 +17,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   public username!: string;
   public email!: string;
   public password!: string;
+  public image!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
@@ -43,6 +45,11 @@ export default (sequelize: Sequelize): typeof User => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      image: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
+      
     },
     {
       sequelize,

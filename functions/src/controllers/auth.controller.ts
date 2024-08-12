@@ -40,6 +40,7 @@ export const signup = async (req: Request, res: Response) => {
       username,
       email,
       password: hashedPassword,
+      image: "https://avatars.githubusercontent.com/u/72054311?s=400&u=93af08ef4fba8573510d1f7265840233e95bb760&v=4"
     });
 
     if (roles && roles.length > 0) {

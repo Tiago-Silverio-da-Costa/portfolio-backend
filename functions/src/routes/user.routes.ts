@@ -25,6 +25,15 @@ export default function (app: Application): void {
     controller.adminBoard
   );
 
+  app.post("/createpost", controller.createPost)
+  app.get("/getposts", controller.getPost)
+  app.put("/updatepost/:id", controller.updatePost)
+  app.delete("/deletepost/:id", controller.deletePost)
+
+  app.get("/createlead", controller.CreateProfessions)
+  app.get("/gettheme", controller.getThemes)
+  app.get("/getusers", controller.getUsers)
+
   app.post("/createproject", controller.createProject);
   app.get("/getprojects", controller.getProjects);
   app.get("/getproject/:id", controller.getProjectById);

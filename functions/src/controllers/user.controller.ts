@@ -3,6 +3,15 @@ import axios from 'axios';
 import { Project } from '../models/project.model.js';
 import { z } from 'zod';
 import { Experience } from '../models/experience.model.js';
+import { isPossiblePhoneNumber } from "react-phone-number-input";
+import { Lead } from '../models/lead.model.js';
+import { Post } from '../models/post.model.js';
+import { Theme } from '../models/theme.model.js';
+import { Profession } from '../models/profession.model.js';
+import { User } from '../models/user.model.js';
+import { Op } from 'sequelize';
+import validator from 'validator';
+const { isEmail } = validator;
 
 export const allAccess = (req: Request, res: Response) => {
   res.status(200).send("Public Content.");
@@ -15,6 +24,15 @@ export const userBoard = (req: Request, res: Response) => {
 export const adminBoard = (req: Request, res: Response) => {
   res.status(200).send("Admin Content.");
 };
+
+const toTitle = (str: string) => {
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
 
 export const ProjectSchema = z.object({
   name: z.string(),
@@ -37,6 +55,472 @@ export const ExperienceSchema = z.object({
 })
 export type TCreateExperience = z.TypeOf<typeof ExperienceSchema>
 
+export const CreateLeadSchema = z.object({
+  name: z
+    .string()
+    .min(1, "Campo obrigatório")
+    .transform((value) => toTitle(value))
+    .refine((value) => value.trim().split(' ').length >= 2, {
+      message: "Digite seu nome completo",
+    }),
+
+  email: z
+    .string()
+    .min(1, "Campo obrigatório")
+    .toLowerCase()
+    .refine((value) => isEmail(value), {
+      message: "Digite um email válido",
+    }),
+  phone: z
+    .string()
+    .min(1, "Campo obrigatório")
+    .transform((value) => value.match(/\d/g)?.join(""))
+    .refine((value) => !value || isPossiblePhoneNumber("+" + value), {
+      message: "Digite um telefone válido",
+    }),
+});
+export type TCreateLead = z.infer<typeof CreateLeadSchema>;
+
+const notSelect = (value: string | undefined) => value !== "selecione";
+
+export const createBlogSchema = z.object({
+  title: z
+    .string()
+    .trim()
+    .min(1, "Campo obrigatório"),
+
+  subtitle: z
+    .string()
+    .trim()
+    .min(1, "Campo obrigatório"),
+
+  profession: z
+    .string()
+    .trim()
+    .refine(notSelect, {
+      message: "Campo obrigatório",
+    }),
+
+  content: z
+    .string()
+    .trim()
+    .min(1, "Campo obrigatório"),
+
+  existedTheme: z
+    .string()
+    .trim(),
+
+  createTheme: z
+    .string()
+    .trim(),
+
+  existedAuthor: z
+    .string()
+    .trim(),
+
+  createAuthor: z
+    .string()
+    .trim(),
+})
+  .superRefine((data, ctx) => {
+    if (data.createTheme === "" && notSelect(data.existedTheme)) {
+      ctx.addIssue({
+        path: ['existedTheme'],
+        message: "Campo obrigatório",
+        code: z.ZodIssueCode.custom,
+      });
+    }
+
+    if (data.existedTheme === "selecione" && !data.createTheme) {
+      ctx.addIssue({
+        path: ['createTheme'],
+        message: "Campo obrigatório",
+        code: z.ZodIssueCode.custom,
+      });
+    }
+
+    if (data.createAuthor === "" && notSelect(data.existedAuthor)) {
+      ctx.addIssue({
+        path: ['existedAuthor'],
+        message: "Campo obrigatório",
+        code: z.ZodIssueCode.custom,
+      });
+    }
+
+    if (data.existedAuthor === "selecione" && !data.createAuthor) {
+      ctx.addIssue({
+        path: ['createAuthor'],
+        message: "Campo obrigatório",
+        code: z.ZodIssueCode.custom,
+      });
+    }
+  });
+export type TCreateBlog = z.infer<typeof createBlogSchema>;
+
+export const createFormlead = async (req: Request, res: Response) => {
+  try {
+    if (req.headers["content-type"] !== "application/json") {
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid format",
+        error: "CreateFormLead-001",
+      })
+    }
+    const schema = CreateLeadSchema;
+
+    let {
+      name,
+      email,
+      phone
+    }: TCreateLead = schema.parse(req.body)
+
+    name = toTitle(name.trim()).substring(0, 60);
+    email = email.trim().toLowerCase().substring(0, 60);
+    phone = phone?.replace(/\D/g, "").substring(0, 25);
+    if (!name || !email || !phone) {
+      let fields = []
+      if (!name || name == "") fields.push("name");
+      if (!email || !isEmail(email)) fields.push("email");
+      if (!phone || phone == "") fields.push("phone");
+
+      return res.status(400).json({
+        status: "error",
+        message: "Dados inválidos!",
+        error: "CreateFormLead-002",
+        fields
+      })
+    }
+
+    const trustedDomains = [
+      "https://i.imgur.com/",
+      "https://github.com/",
+      "https://www.youtube.com/",
+      "https://barbearia-john.vercel.app/",
+      "https://personal-blog-cmsn.vercel.app/"
+    ];
+
+    let isTrustedDomain = false;
+    for (const domain of trustedDomains) {
+      if (name.startsWith(domain) || email.startsWith(domain) || phone.startsWith(domain)) {
+        isTrustedDomain = true;
+        break;
+      }
+    }
+
+    if (!isTrustedDomain) {
+      return res.status(403).send("Access to this domain is not permitted");
+    }
+
+    const leadAlreadyExists = await Lead.findOne({
+      where: {
+        email: email
+      },
+    })
+
+    if (leadAlreadyExists) {
+      return res.status(400).json({
+        status: "error",
+        message: "Usuário já existe!",
+        error: "CreateFormLead-003"
+      });
+    }
+
+    await Lead.create({
+      name,
+      email,
+      phone
+    })
+
+    return res.status(201).json({
+      status: "success",
+      message: "FormLead created successfully",
+    });
+
+
+  } catch (error) {
+    const err = error as Error;
+    if (axios.isAxiosError(err)) {
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid URL",
+        error: "CreateFormLead-004"
+      });
+    }
+    return res.status(500).send(err.message);
+  }
+}
+
+export const createPost = async (req: Request, res: Response) => {
+  try {
+    if (req.headers["content-type"] !== "application/json") {
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid format",
+        error: "CreatePost-001"
+      })
+    }
+    const schema = createBlogSchema;
+
+    let {
+      title,
+      subtitle,
+      createTheme,
+      existedTheme,
+      existedAuthor,
+      createAuthor,
+      content,
+      profession,
+    }: TCreateBlog = schema.parse(req.body)
+
+    title = toTitle(title?.trim() ?? "").substring(0, 100);
+    subtitle = toTitle(subtitle?.trim() ?? "").substring(0, 100);
+    content = (content?.trim() ?? "").substring(0, 10000);
+    existedAuthor = toTitle(existedAuthor?.trim() ?? "").substring(0, 25);
+    createAuthor = toTitle(createAuthor?.trim() ?? "").substring(0, 25);
+    existedTheme = toTitle(existedTheme?.trim() ?? "").substring(0, 25);
+    createTheme = toTitle(createTheme?.trim() ?? "").substring(0, 25);
+    profession = toTitle(profession?.trim() ?? "").substring(0, 25);
+
+    if (!title || !subtitle || !content || !existedAuthor || !profession) {
+      let fields = [];
+      if (!title) fields.push("title");
+      if (!subtitle) fields.push("subTitle");
+      if (!content) fields.push("content");
+      if (!existedAuthor) fields.push("existedAuthor");
+      if (!profession) fields.push("profession");
+      if (createTheme === "") fields.push("existedTheme");
+      if (existedTheme === "") fields.push("createTheme");
+
+      return res.status(400).json({
+        status: "error",
+        message: "Dados inválidos!",
+        error: "CreatePost-002",
+        fields
+      })
+    }
+
+    const trustedDomains = [
+      "https://i.imgur.com/",
+      "https://github.com/",
+      "https://www.youtube.com/",
+      "https://barbearia-john.vercel.app/",
+      "https://personal-blog-cmsn.vercel.app/"
+    ];
+
+    let isTrustedDomain = false;
+    for (const domain of trustedDomains) {
+      if (title.startsWith(domain) || subtitle.startsWith(domain) || content.startsWith(domain) || existedAuthor.startsWith(domain) || profession.startsWith(domain) || createTheme.startsWith(domain) || existedTheme.startsWith(domain)) {
+        isTrustedDomain = true;
+        break;
+      }
+    }
+
+    if (!isTrustedDomain) {
+      return res.status(403).send("Access to this domain is not permitted");
+    }
+
+    // Check if the theme already exists
+    const themeAlreadyExists = await Theme.findOne({
+      where: { name: createTheme },
+      attributes: ['id']
+    });
+
+    if (themeAlreadyExists) {
+      return res.status(400).json({
+        status: "error",
+        message: "Theme already exists!",
+        error: "CreatePost-003",
+      });
+    }
+
+    // Find the theme data by existing theme
+    const themeData = await Theme.findOne({
+      include: {
+        model: Post,
+        where: { name: existedTheme },
+        required: true,
+        attributes: []
+      },
+      where: {
+        [Op.not]: {
+          '$Posts.id$': null
+        }
+      }
+    });
+
+    // Find the profession data
+    const professionData = await Profession.findOne({
+      where: { name: profession }
+    });
+
+    if (!professionData) {
+      return res.status(404).json({
+        status: "error",
+        message: "Profession not found!",
+        error: "CreatePost-004"
+      });
+    }
+
+    // Find the author data
+    const authorData = await User.findOne({
+      include: {
+        model: Post,
+        where: { name: existedAuthor },
+        required: true,
+        attributes: []
+      },
+      where: {
+        [Op.not]: {
+          '$Posts.id$': null
+        }
+      }
+    });
+
+    // Create the post
+    await Post.create({
+      title,
+      subtitle,
+      image: "https://avatars.githubusercontent.com/u/72054311?s=400&u=93af08ef4fba8573510d1f7265840233e95bb760&v=4",
+      content,
+      themeId: themeData?.id,
+      authorId: authorData?.id,
+      professionId: professionData.id
+    });
+
+    // Create a new author if needed
+    if (createAuthor) {
+      await User.create({
+        username: createAuthor,
+        email: "",
+        password: "",
+        image: "https://avatars.githubusercontent.com/u/72054311?s=400&u=93af08ef4fba8573510d1f7265840233e95bb760&v=4",
+      }, {
+        include: [Post]
+      });
+    }
+
+    // Create a new theme if needed
+    if (createTheme) {
+      await Theme.create({
+        name: createTheme.charAt(0).toUpperCase() + createTheme.slice(1),
+      }, {
+        include: [Post]
+      });
+    }
+
+    return res.status(201).json({
+      status: "success",
+      message: "post created successfully",
+    });
+
+  } catch (error) {
+    const err = error as Error;
+    if (axios.isAxiosError(err)) {
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid URL",
+        error: "CreatePost-005"
+      });
+    }
+    return res.status(500).send(err.message);
+  }
+}
+
+export const getPost = async (req: Request, res: Response) => {
+  try {
+    const posts = await Post.findAll();
+    return res.json(posts)
+  } catch (error) {
+    const err = error as Error;
+    return res.status(500).send(err.message);
+  }
+}
+
+export const updatePost = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const {
+      title,
+      subtitle,
+      // createTheme,
+      // existedTheme,
+      // existedAuthor,
+      // createAuthor,
+      content,
+      // profession,
+    }: TCreateBlog = req.body;
+
+    await Post.update({
+      title,
+      subtitle,
+      // createTheme,
+      // existedTheme,
+      // existedAuthor,
+      // createAuthor,
+      content,
+      // profession,
+    }, {
+      where: { id }
+    })
+
+    return res.status(200).json({
+      status: "success",
+      message: "POst updated successfully"
+    });
+
+  } catch (error) {
+    const err = error as Error;
+    return res.status(500).send(err.message);
+  }
+}
+
+export const deletePost = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    await Post.destroy({
+      where: { id }
+    })
+
+    return res.status(200).json({
+      status: "success",
+      message: "Post deleted successfully"
+    });
+  } catch (error) {
+    const err = error as Error;
+    return res.status(500).send(err.message)
+  }
+}
+
+export const CreateProfessions = async (req: Request, res: Response) => {
+  try {
+    const professions = await Profession.findAll()
+    return res.json(professions)
+  } catch (error) {
+    const err = error as Error;
+    return res.status(500).send(err.message)
+  }
+}
+
+export const getThemes = async (req: Request, res: Response) => {
+  try {
+    const themes = await Theme.findAll();
+    return res.json(themes)
+  } catch (error) {
+    const err = error as Error;
+    return res.status(500).send(err.message);
+  }
+}
+
+export const getUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await User.findAll()
+    return res.json(users)
+  } catch (error) {
+    const err = error as Error;
+    return res.status(500).send(err.message);
+  }
+}
 
 export const createProject = async (req: Request, res: Response) => {
   try {
@@ -44,7 +528,7 @@ export const createProject = async (req: Request, res: Response) => {
       return res.status(400).json({
         status: "error",
         message: "Invalid format",
-        error: "CreatePost-001"
+        error: "CreateProject-001"
       })
     }
     const schema = ProjectSchema;
@@ -81,11 +565,10 @@ export const createProject = async (req: Request, res: Response) => {
       if (!project_url) fields.push("project_url");
 
 
-
       return res.status(400).json({
         status: "error",
         message: "Missing fields",
-        error: "CreatePost-002",
+        error: "CreateProject-002",
         fields
       });
     }
@@ -146,7 +629,7 @@ export const createProject = async (req: Request, res: Response) => {
       return res.status(400).json({
         status: "error",
         message: "Invalid URL",
-        error: "CreatePost-003"
+        error: "CreateProject-003"
       });
     }
 
