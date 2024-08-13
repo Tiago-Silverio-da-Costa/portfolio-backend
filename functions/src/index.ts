@@ -12,7 +12,7 @@ admin.initializeApp(functions.config().firebase);
 const app = express();
 
 app.use(cors({
-  origin: "https://portfolio-tiagosc.vercel.app",
+  origin: "https://www.tiagosc.com.br",
   preflightContinue: true,
   credentials: true
 }))
