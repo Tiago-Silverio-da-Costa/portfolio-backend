@@ -7,6 +7,7 @@ export interface UserAttributes {
   email: string;
   password: string;
   image: string;
+  professionId?: number;
   roles?: Role[];
 }
 
@@ -18,6 +19,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   public email!: string;
   public password!: string;
   public image!: string;
+  public professionId!: number;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
@@ -49,7 +51,14 @@ export default (sequelize: Sequelize): typeof User => {
         type: DataTypes.STRING,
         allowNull: false
       },
-      
+      professionId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: 'professions',
+          key: 'id',
+        },
+      },
+
     },
     {
       sequelize,

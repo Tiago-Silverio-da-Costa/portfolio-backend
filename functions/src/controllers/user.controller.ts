@@ -344,6 +344,15 @@ export const createPost = async (req: Request, res: Response) => {
       }
     });
 
+    if (!themeData) {
+      return res.status(400).json({
+        status: "error",
+        message: "Theme already exists!",
+        error: "UpdatePost-003",
+      });
+    }
+
+
     const professionData = await Profession.findOne({
       where: { name: profession }
     });
@@ -370,6 +379,14 @@ export const createPost = async (req: Request, res: Response) => {
       }
     });
 
+    if (!authorData) {
+      return res.status(400).json({
+        status: "error",
+        message: "author already exists!",
+        error: "UpdatePost-003",
+      });
+    }
+
     await Post.create({
       title,
       subtitle,
@@ -386,6 +403,7 @@ export const createPost = async (req: Request, res: Response) => {
         email: "",
         password: "",
         image: "https://avatars.githubusercontent.com/u/72054311?s=400&u=93af08ef4fba8573510d1f7265840233e95bb760&v=4",
+        professionId: professionData.id
       }, {
         include: [Post]
       });
@@ -524,6 +542,14 @@ export const updatePost = async (req: Request, res: Response) => {
       }
     });
 
+    if (!themeData) {
+      return res.status(400).json({
+        status: "error",
+        message: "Theme already exists!",
+        error: "UpdatePost-003",
+      });
+    }
+
     const professionData = await Profession.findOne({
       where: { name: profession }
     });
@@ -550,13 +576,22 @@ export const updatePost = async (req: Request, res: Response) => {
       }
     });
 
+    if (!authorData) {
+      return res.status(400).json({
+        status: "error",
+        message: "author already exists!",
+        error: "UpdatePost-003",
+      });
+    }
+
+
     await Post.update({
       title,
       subtitle,
       image: "https://avatars.githubusercontent.com/u/72054311?s=400&u=93af08ef4fba8573510d1f7265840233e95bb760&v=4",
       content,
-      themeId: themeData?.id,
-      authorId: authorData?.id,
+      themeId: themeData.id,
+      authorId: authorData.id,
       professionId: professionData.id
     }, {
       where: { id }
@@ -568,6 +603,7 @@ export const updatePost = async (req: Request, res: Response) => {
         email: "",
         password: "",
         image: "https://avatars.githubusercontent.com/u/72054311?s=400&u=93af08ef4fba8573510d1f7265840233e95bb760&v=4",
+        professionId: professionData.id
       }, {
         include: [Post]
       });
