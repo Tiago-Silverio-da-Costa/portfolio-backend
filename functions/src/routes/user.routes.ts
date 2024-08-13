@@ -30,8 +30,9 @@ export default function (app: Application): void {
   app.put("/updatepost/:id", controller.updatePost)
   app.delete("/deletepost/:id", controller.deletePost)
 
-  app.get("/createlead", controller.CreateProfessions)
-  app.get("/gettheme", controller.getThemes)
+  app.get("/createlead", controller.createFormlead)
+  app.get("/getprofessions", controller.CreateProfessions)
+  app.get("/getthemes", controller.getThemes)
   app.get("/getusers", controller.getUsers)
 
   app.post("/createproject", controller.createProject);
