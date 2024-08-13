@@ -88,39 +88,40 @@ export const createBlogSchema = z.object({
     .string()
     .trim()
     .min(1, "Campo obrigatório"),
-
   subtitle: z
     .string()
     .trim()
     .min(1, "Campo obrigatório"),
-
   profession: z
     .string()
     .trim()
     .refine(notSelect, {
       message: "Campo obrigatório",
     }),
-
   content: z
     .string()
     .trim()
     .min(1, "Campo obrigatório"),
-
   existedTheme: z
     .string()
-    .trim(),
-
+    .trim()
+    .optional(),
   createTheme: z
     .string()
-    .trim(),
-
+    .trim()
+    .optional(),
   existedAuthor: z
     .string()
-    .trim(),
-
+    .trim()
+    .optional(),
   createAuthor: z
     .string()
-    .trim(),
+    .trim()
+    .optional(),
+  image: z
+    .string()
+    .trim()
+    .optional(),
 })
   .superRefine((data, ctx) => {
     if (data.createTheme === "" && notSelect(data.existedTheme)) {
@@ -130,7 +131,6 @@ export const createBlogSchema = z.object({
         code: z.ZodIssueCode.custom,
       });
     }
-
     if (data.existedTheme === "selecione" && !data.createTheme) {
       ctx.addIssue({
         path: ['createTheme'],
@@ -138,7 +138,6 @@ export const createBlogSchema = z.object({
         code: z.ZodIssueCode.custom,
       });
     }
-
     if (data.createAuthor === "" && notSelect(data.existedAuthor)) {
       ctx.addIssue({
         path: ['existedAuthor'],
@@ -146,7 +145,6 @@ export const createBlogSchema = z.object({
         code: z.ZodIssueCode.custom,
       });
     }
-
     if (data.existedAuthor === "selecione" && !data.createAuthor) {
       ctx.addIssue({
         path: ['createAuthor'],
@@ -319,7 +317,6 @@ export const createPost = async (req: Request, res: Response) => {
       return res.status(403).send("Access to this domain is not permitted");
     }
 
-    // Check if the theme already exists
     const themeAlreadyExists = await Theme.findOne({
       where: { name: createTheme },
       attributes: ['id']
@@ -333,7 +330,6 @@ export const createPost = async (req: Request, res: Response) => {
       });
     }
 
-    // Find the theme data by existing theme
     const themeData = await Theme.findOne({
       include: {
         model: Post,
@@ -348,7 +344,6 @@ export const createPost = async (req: Request, res: Response) => {
       }
     });
 
-    // Find the profession data
     const professionData = await Profession.findOne({
       where: { name: profession }
     });
@@ -361,7 +356,6 @@ export const createPost = async (req: Request, res: Response) => {
       });
     }
 
-    // Find the author data
     const authorData = await User.findOne({
       include: {
         model: Post,
@@ -376,7 +370,6 @@ export const createPost = async (req: Request, res: Response) => {
       }
     });
 
-    // Create the post
     await Post.create({
       title,
       subtitle,
@@ -387,8 +380,7 @@ export const createPost = async (req: Request, res: Response) => {
       professionId: professionData.id
     });
 
-    // Create a new author if needed
-    if (createAuthor) {
+    if (createAuthor !== "") {
       await User.create({
         username: createAuthor,
         email: "",
@@ -399,8 +391,7 @@ export const createPost = async (req: Request, res: Response) => {
       });
     }
 
-    // Create a new theme if needed
-    if (createTheme) {
+    if (createTheme !== "") {
       await Theme.create({
         name: createTheme.charAt(0).toUpperCase() + createTheme.slice(1),
       }, {
@@ -439,29 +430,156 @@ export const getPost = async (req: Request, res: Response) => {
 export const updatePost = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const {
+    if (req.headers["content-type"] !== "application/json") {
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid format",
+        error: "UpdatePost-001"
+      })
+    }
+    const schema = createBlogSchema;
+
+    let {
       title,
       subtitle,
-      // createTheme,
-      // existedTheme,
-      // existedAuthor,
-      // createAuthor,
+      createTheme,
+      existedTheme,
+      existedAuthor,
+      createAuthor,
       content,
-      // profession,
-    }: TCreateBlog = req.body;
+      profession,
+    }: TCreateBlog = schema.parse(req.body)
+
+    title = toTitle(title?.trim() ?? "").substring(0, 100);
+    subtitle = toTitle(subtitle?.trim() ?? "").substring(0, 100);
+    content = (content?.trim() ?? "").substring(0, 10000);
+    existedAuthor = toTitle(existedAuthor?.trim() ?? "").substring(0, 25);
+    createAuthor = toTitle(createAuthor?.trim() ?? "").substring(0, 25);
+    existedTheme = toTitle(existedTheme?.trim() ?? "").substring(0, 25);
+    createTheme = toTitle(createTheme?.trim() ?? "").substring(0, 25);
+    profession = toTitle(profession?.trim() ?? "").substring(0, 25);
+
+    if (!title || !subtitle || !content || !existedAuthor || !profession) {
+      let fields = [];
+      if (!title) fields.push("title");
+      if (!subtitle) fields.push("subTitle");
+      if (!content) fields.push("content");
+      if (!existedAuthor) fields.push("existedAuthor");
+      if (!profession) fields.push("profession");
+      if (createTheme === "") fields.push("existedTheme");
+      if (existedTheme === "") fields.push("createTheme");
+
+      return res.status(400).json({
+        status: "error",
+        message: "Dados inválidos!",
+        error: "UpdatePost-002",
+        fields
+      })
+    }
+
+    const trustedDomains = [
+      "https://i.imgur.com/",
+      "https://github.com/",
+      "https://www.youtube.com/",
+      "https://barbearia-john.vercel.app/",
+      "https://personal-blog-cmsn.vercel.app/"
+    ];
+
+    let isTrustedDomain = false;
+    for (const domain of trustedDomains) {
+      if (title.startsWith(domain) || subtitle.startsWith(domain) || content.startsWith(domain) || existedAuthor.startsWith(domain) || profession.startsWith(domain) || createTheme.startsWith(domain) || existedTheme.startsWith(domain)) {
+        isTrustedDomain = true;
+        break;
+      }
+    }
+
+    if (!isTrustedDomain) {
+      return res.status(403).send("Access to this domain is not permitted");
+    }
+
+    const themeAlreadyExists = await Theme.findOne({
+      where: { name: createTheme },
+      attributes: ['id']
+    });
+
+    if (themeAlreadyExists) {
+      return res.status(400).json({
+        status: "error",
+        message: "Theme already exists!",
+        error: "UpdatePost-003",
+      });
+    }
+
+    const themeData = await Theme.findOne({
+      include: {
+        model: Post,
+        where: { name: existedTheme },
+        required: true,
+        attributes: []
+      },
+      where: {
+        [Op.not]: {
+          '$Posts.id$': null
+        }
+      }
+    });
+
+    const professionData = await Profession.findOne({
+      where: { name: profession }
+    });
+
+    if (!professionData) {
+      return res.status(404).json({
+        status: "error",
+        message: "Profession not found!",
+        error: "UpdatePost-004"
+      });
+    }
+
+    const authorData = await User.findOne({
+      include: {
+        model: Post,
+        where: { name: existedAuthor },
+        required: true,
+        attributes: []
+      },
+      where: {
+        [Op.not]: {
+          '$Posts.id$': null
+        }
+      }
+    });
 
     await Post.update({
       title,
       subtitle,
-      // createTheme,
-      // existedTheme,
-      // existedAuthor,
-      // createAuthor,
+      image: "https://avatars.githubusercontent.com/u/72054311?s=400&u=93af08ef4fba8573510d1f7265840233e95bb760&v=4",
       content,
-      // profession,
+      themeId: themeData?.id,
+      authorId: authorData?.id,
+      professionId: professionData.id
     }, {
       where: { id }
-    })
+    });
+
+    if (createAuthor !== "") {
+      await User.create({
+        username: createAuthor,
+        email: "",
+        password: "",
+        image: "https://avatars.githubusercontent.com/u/72054311?s=400&u=93af08ef4fba8573510d1f7265840233e95bb760&v=4",
+      }, {
+        include: [Post]
+      });
+    }
+
+    if (createTheme !== "") {
+      await Theme.create({
+        name: createTheme.charAt(0).toUpperCase() + createTheme.slice(1),
+      }, {
+        include: [Post]
+      });
+    }
 
     return res.status(200).json({
       status: "success",

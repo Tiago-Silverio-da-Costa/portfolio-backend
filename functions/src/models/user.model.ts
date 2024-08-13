@@ -47,7 +47,7 @@ export default (sequelize: Sequelize): typeof User => {
       },
       image: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: false
       },
       
     },
