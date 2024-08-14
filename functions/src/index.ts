@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import db from './models/index.js';
-import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
 import bodyParser from 'body-parser';
 import functions from 'firebase-functions';
@@ -27,7 +26,8 @@ app.get('/', (req, res) => {
   res.json({ message: 'Welcome to tiagosc application' });
 });
 
-authRoutes(app);
 userRoutes(app);
 
 export const api = functions.https.onRequest(app);
+
+

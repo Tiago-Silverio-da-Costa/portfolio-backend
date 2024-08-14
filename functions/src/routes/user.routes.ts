@@ -1,5 +1,4 @@
 import { Application, Request, Response, NextFunction } from 'express';
-import { authJwt } from '../middleware/index.js';
 import * as controller from '../controllers/user.controller.js';
 
 export default function (app: Application): void {
@@ -13,27 +12,7 @@ export default function (app: Application): void {
 
   app.get("/api/test/all", controller.allAccess);
 
-  app.get(
-    "/api/test/user",
-    [authJwt.verifyToken],
-    controller.userBoard
-  );
-
-  app.get(
-    "/api/test/admin",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    controller.adminBoard
-  );
-
-  app.post("/createpost", controller.createPost)
-  app.get("/getposts", controller.getPost)
-  app.put("/updatepost/:id", controller.updatePost)
-  app.delete("/deletepost/:id", controller.deletePost)
-
-  app.get("/createlead", controller.createFormlead)
-  app.get("/getprofessions", controller.CreateProfessions)
-  app.get("/getthemes", controller.getThemes)
-  app.get("/getusers", controller.getUsers)
+  app.post("/createlead", controller.createFormlead)
 
   app.post("/createproject", controller.createProject);
   app.get("/getprojects", controller.getProjects);

@@ -34,7 +34,7 @@ export default (sequelize: Sequelize): typeof Experience => {
                 allowNull: false,
             },
             description: {
-                type: DataTypes.STRING(5000),
+                type: DataTypes.STRING(10000),
                 allowNull: false,
             },
             init_time: {
