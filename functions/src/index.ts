@@ -11,7 +11,7 @@ admin.initializeApp(functions.config().firebase);
 const app = express();
 
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: "https://wwww.tiagosc.com.br/",
   preflightContinue: true,
   credentials: true
 }))

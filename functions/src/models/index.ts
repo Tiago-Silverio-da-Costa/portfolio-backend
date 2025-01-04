@@ -11,6 +11,7 @@ const sequelize = new Sequelize(
     {
         host: config.HOST,
         dialect: config.dialect as 'postgres',
+        logging: false,
         dialectOptions: {
             ssl: {
                 require: false,

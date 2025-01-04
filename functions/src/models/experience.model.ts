@@ -49,7 +49,7 @@ export default (sequelize: Sequelize): typeof Experience => {
             },
             language: {
                 type: DataTypes.STRING,
-                allowNull: false,
+                allowNull: true,
             },
         },
         {

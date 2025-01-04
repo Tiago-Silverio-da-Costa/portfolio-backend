@@ -10,6 +10,7 @@ interface ProjectAttributes {
     programming_language: string;
     repo_url: string;
     project_url: string;
+    language: string;
 }
 
 interface ProjectCreationAttributes extends Optional<ProjectAttributes, 'id'> { }
@@ -24,6 +25,7 @@ export class Project extends Model<ProjectAttributes, ProjectCreationAttributes>
     public programming_language!: string;
     public repo_url!: string;
     public project_url!: string;
+    public language!: string;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -68,6 +70,10 @@ export default (sequelize: Sequelize): typeof Project => {
             project_url: {
                 type: DataTypes.STRING,
                 allowNull: false,
+            },
+            language: {
+                type: DataTypes.STRING,
+                allowNull: true,
             },
         },
         {

@@ -37,7 +37,8 @@ export const ProjectSchema = z.object({
   video_url: z.string().url().startsWith("https://"),
   programming_language: z.string(),
   repo_url: z.string().url().startsWith("https://"),
-  project_url: z.string().url().startsWith("https://")
+  project_url: z.string().url().startsWith("https://"),
+  language: z.string().min(1, { message: "Required Field" }),
 });
 export type TCreateProject = z.infer<typeof ProjectSchema>;
 
@@ -190,7 +191,8 @@ export const createProject = async (req: Request, res: Response) => {
       gif_url,
       video_url,
       repo_url,
-      project_url
+      project_url,
+      language
     }: TCreateProject = schema.parse(req.body);
 
     name = (name?.trim() ?? "").substring(0, 100);
@@ -201,8 +203,9 @@ export const createProject = async (req: Request, res: Response) => {
     video_url = (video_url?.trim() ?? "").substring(0, 255);
     repo_url = (repo_url?.trim() ?? "").substring(0, 255);
     project_url = (project_url?.trim() ?? "").substring(0, 255);
+    language = (language?.trim() ?? "").substring(0, 5);
 
-    if (!name || !description || !image_url || !gif_url || !video_url || !programming_language || !repo_url || !project_url) {
+    if (!name || !description || !image_url || !gif_url || !video_url || !programming_language || !repo_url || !project_url || !language) {
       let fields: string[] = [];
       if (!name) fields.push("name");
       if (!description) fields.push("description");
@@ -212,6 +215,7 @@ export const createProject = async (req: Request, res: Response) => {
       if (!programming_language) fields.push("programming_language");
       if (!repo_url) fields.push("repo_url");
       if (!project_url) fields.push("project_url");
+      if (!language) fields.push("language");
 
 
       return res.status(400).json({
@@ -258,7 +262,8 @@ export const createProject = async (req: Request, res: Response) => {
       video_url,
       programming_language,
       repo_url,
-      project_url
+      project_url,
+      language
     });
 
     return res.status(201).json({
@@ -288,7 +293,19 @@ export const createProject = async (req: Request, res: Response) => {
 
 export const getProjects = async (req: Request, res: Response) => {
   try {
-    const projects = await Project.findAll();
+    const language = req.query.language;
+
+    if (!language || typeof language !== 'string') {
+      return res.status(400).json({ message: 'Language parameter must be a string and is required' });
+    }
+    const projects = await Project.findAll({
+      where: { language },
+      attributes: ['id', 'name', 'description', 'image_url', 'gif_url', 'video_url', 'programming_language', 'repo_url', 'project_url', 'language'], 
+    });
+    if (projects.length === 0) {
+      return res.status(404).json({ message: 'No experiences found for the specified language' });
+    }
+
     return res.json(projects);
   } catch (error) {
     const err = error as Error;
@@ -319,7 +336,7 @@ export const getProjectById = async (req: Request, res: Response) => {
 export const updateProject = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { name, description, image_url, gif_url, video_url, programming_language, repo_url, project_url }: TCreateProject = req.body;
+    const { name, description, image_url, gif_url, video_url, programming_language, repo_url, project_url, language }: TCreateProject = req.body;
 
     await Project.update({
       name,
@@ -329,7 +346,8 @@ export const updateProject = async (req: Request, res: Response) => {
       video_url,
       programming_language,
       repo_url,
-      project_url
+      project_url,
+      language
     }, {
       where: { id }
     });
@@ -385,7 +403,7 @@ export const createExperience = async (req: Request, res: Response) => {
     description = (description?.trim() ?? "").substring(0, 5000);
     init_time = (init_time?.trim() ?? "").substring(0, 25);
     final_time = (final_time?.trim() ?? "").substring(0, 25);
-    language = (company?.trim() ?? "").substring(0, 100);
+    language = (company?.trim() ?? "").substring(0, 5);
 
     if (!company || !description || !init_time || !final_time || !language) {
       let fields: string[] = [];

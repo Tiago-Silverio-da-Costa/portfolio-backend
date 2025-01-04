@@ -3,6 +3,7 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "target": "ES2017",
+    "rootDir": "src",
     "skipLibCheck": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
