@@ -47,6 +47,7 @@ export const ExperienceSchema = z.object({
   description: z.string().min(1, { message: "Required Field" }),
   init_time: z.string().min(1, { message: "Required Field" }),
   final_time: z.string().min(1, { message: "Required Field" }),
+  language: z.string().min(1, { message: "Required Field" }),
 })
 export type TCreateExperience = z.TypeOf<typeof ExperienceSchema>
 
@@ -376,20 +377,23 @@ export const createExperience = async (req: Request, res: Response) => {
       company,
       description,
       init_time,
-      final_time
+      final_time,
+      language
     }: TCreateExperience = req.body;
 
     company = (company?.trim() ?? "").substring(0, 100);
     description = (description?.trim() ?? "").substring(0, 5000);
     init_time = (init_time?.trim() ?? "").substring(0, 25);
     final_time = (final_time?.trim() ?? "").substring(0, 25);
+    language = (company?.trim() ?? "").substring(0, 100);
 
-    if (!company || !description || !init_time || !final_time) {
+    if (!company || !description || !init_time || !final_time || !language) {
       let fields: string[] = [];
       if (!company) fields.push("company")
       if (!description) fields.push("description")
       if (!init_time) fields.push("init_time")
       if (!final_time) fields.push("final_time")
+      if (!language) fields.push("language")
 
       return res.status(400).json({
         status: "error",
@@ -403,7 +407,8 @@ export const createExperience = async (req: Request, res: Response) => {
       company,
       description,
       init_time,
-      final_time
+      final_time,
+      language
     });
 
     return res.status(201).json({
@@ -419,7 +424,22 @@ export const createExperience = async (req: Request, res: Response) => {
 
 export const getExperiences = async (req: Request, res: Response) => {
   try {
-    const experiences = await Experience.findAll();
+
+    const language = req.query.language;
+
+    if (!language || typeof language !== 'string') {
+      return res.status(400).json({ message: 'Language parameter must be a string and is required' });
+    }
+
+    const experiences = await Experience.findAll({
+      where: { language },
+      attributes: ['id', 'company', 'description', 'init_time', 'final_time', 'language'], 
+    });
+
+    if (experiences.length === 0) {
+      return res.status(404).json({ message: 'No experiences found for the specified language' });
+    }
+
     return res.json(experiences);
   } catch (error) {
     const err = error as Error;
@@ -450,13 +470,14 @@ export const getExperienceById = async (req: Request, res: Response) => {
 export const updateExperience = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { company, description, init_time, final_time }: TCreateExperience = req.body;
+    const { company, description, init_time, final_time, language }: TCreateExperience = req.body;
 
     await Experience.update({
       company,
       description,
       init_time,
-      final_time
+      final_time,
+      language
     }, {
       where: { id }
     });

@@ -6,6 +6,7 @@ interface ExperienceAttributes {
     description: string;
     init_time: string;
     final_time: string;
+    language: string;
 }
 
 interface ExperienceCreationAttributes extends Optional<ExperienceAttributes, 'id'> { }
@@ -16,6 +17,7 @@ export class Experience extends Model<ExperienceAttributes, ExperienceCreationAt
     public description!: string;
     public init_time!: string;
     public final_time!: string;
+    public language!: string;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -43,6 +45,10 @@ export default (sequelize: Sequelize): typeof Experience => {
             },
             final_time: {
                 type: DataTypes.STRING(25),
+                allowNull: false,
+            },
+            language: {
+                type: DataTypes.STRING,
                 allowNull: false,
             },
         },
